@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form"
 import { SignupValidation } from "@/lib/validation"
 import Loader from "@/components/shared/Loader"
+import { createUserAccount } from "@/lib/appwrite/api"
 
 
 
@@ -41,8 +42,9 @@ const SignupForm = () => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     // Create the user
-    //const newUser = await createUserAccount(values);
+    const newUser = await createUserAccount(values);
     //Appwrite will help us with auth
+    console.log(newUser)
   }
 
   return (
