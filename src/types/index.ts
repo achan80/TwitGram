@@ -1,6 +1,15 @@
 //contains a couple of different interfaces
 //this is like a proto file - define types
 
+export type IContextType = {
+  user: IUser;
+  isLoading: boolean;
+  setUser: React.Dispatch<React.SetStateAction<IUser>>;
+  isAuthenticated: boolean;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+  checkAuthUser: () => Promise<boolean>;
+}
+
 export type INavLink = {
     imgURL: string;
     route: string;

@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form"
 import { SignupValidation } from "@/lib/validation"
 import Loader from "@/components/shared/Loader"
-import { useCreateUserAccount } from "@/lib/react-query/queriesAndMutations"
+import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/queriesAndMutations"
 
 
 
@@ -31,6 +31,9 @@ const SignupForm = () => {
   //connecting through mutateAsync via api.ts
   //we can rename it to make it clearer
   const { mutateAsync: createUserAccount, isLoading: isCreatingUser} = useCreateUserAccount() //as a hook
+
+  //we can repeat this with the other hook
+  const { mutateAsync: signInAccount, isLoading: isSigningIn} = useSignInAccount()
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof SignupValidation>>({
@@ -62,7 +65,19 @@ const SignupForm = () => {
     //provides feedback on what's happening
 
     //if successful - sign into session
-    //const session = await signInAccount()
+    const session = await signInAccount({
+      email: values.email, //what or where is values
+      password: values.password, //all of this is coming from our from
+    })
+
+    if(!session) {
+      return toast({
+        title: 'Sign in failed. Please try again.'
+      })
+    }//After we have the session - we need to store session in our react context
+    //At all times we need to know we have a logged in user - in context folder
+
+    //Authentication and creating user accounts is one of the most complicated parts of every application
   }
 
   return (
