@@ -1,11 +1,11 @@
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link } from 'react-router-dom'
+import { useToast } from "@/components/ui/use-toast"
 
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form"
 import { SignupValidation } from "@/lib/validation"
 import Loader from "@/components/shared/Loader"
-import { createUserAccount } from "@/lib/appwrite/api"
+import { useCreateUserAccount } from "@/lib/react-query/queriesAndMutations"
 
 
 
@@ -24,7 +24,13 @@ import { createUserAccount } from "@/lib/appwrite/api"
 
 
 const SignupForm = () => {
-  const isLoading = false;
+  const { toast } = useToast() //we need to declare it as a hook up top
+
+  //get an object out of it
+  //mutateAsync is the CreateUserAccount
+  //connecting through mutateAsync via api.ts
+  //we can rename it to make it clearer
+  const { mutateAsync: createUserAccount, isLoading: isCreatingUser} = useCreateUserAccount() //as a hook
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof SignupValidation>>({
@@ -45,6 +51,18 @@ const SignupForm = () => {
     const newUser = await createUserAccount(values);
     //Appwrite will help us with auth
     console.log(newUser)
+    //what to do after the user is created
+    if(!newUser) {
+      return toast( {
+        title: "Sign up failed. Please try again.",
+      })//if there is no new user - simply return
+      //with toast message
+    }
+    //build a small toast - small popup
+    //provides feedback on what's happening
+
+    //if successful - sign into session
+    //const session = await signInAccount()
   }
 
   return (
@@ -113,7 +131,7 @@ const SignupForm = () => {
             )}
           />
           <Button type="submit" className="shad-button_primary">
-            {isLoading ?(
+            {isCreatingUser ?(
               <div className="flex-center gap-2">
                 <Loader />Loading...
               </div>
